@@ -2,6 +2,11 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: trial-app
+  annotations:
+    "sidecar.jaegertracing.io/inject": "true" 
+    prometheus.io/scrape: "true"
+    prometheus.io/path: "/metrics"
+    prometheus.io/port: trialport
 spec:
   replicas: 3
   selector:
@@ -14,18 +19,25 @@ spec:
     spec:
       containers:
       - name: trial
-        image: ghcr.io/jasonsmithio/trial:v1
+        image: york42/nd064-p3-trial:latest
+        imagePullPolicy: Always
         ports:
-        - containerPort: 8080
+        - name: trialport
+          containerPort: 8080
+          protocol: TCP
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: trial-service
+  name: trial
+  labels:
+    app: trial
 spec:
   selector:
     app: trial
   ports:
-    - port: 8082
-      targetPort: 8080
+    - name: trial
+      protocol: TCP
+      port: 8082
+      targetPort: trialport
   type: LoadBalancer

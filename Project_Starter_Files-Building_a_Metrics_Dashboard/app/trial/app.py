@@ -1,6 +1,7 @@
 import logging
 import re
 import requests
+import opentracing
 
 
 from flask import Flask, jsonify, render_template
@@ -59,7 +60,7 @@ def trace():
 
     with tracer.start_span("get-python-jobs") as span:
         res = requests.get("https://jobs.github.com/positions.json?description=python")
-        span.log_kv({"event": "get jobs count", "count": len(res.json())})
+        span.log_kv({"event": "get jobs count", "count": str(len(res.json()))})
         span.set_tag("jobs-count", len(res.json()))
 
         jobs_info = []

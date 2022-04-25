@@ -32,7 +32,7 @@ spec:
     matchLabels:
       app: frontend
   endpoints:
-  - port: frontend-port
+  - port: frontend
     path: /metrics
     interval: 15s
   namespaceSelector:

@@ -48,11 +48,23 @@ flask_tracer = FlaskTracing(tracer, True, app)
 
 
 @app.route("/")
+@metrics.counter(
+    'cnt_homepage', 'Number of invocations of homepage',
+    labels = {
+        'status': lambda resp: resp.status_code
+    }
+)
 def homepage():
     return render_template("main.html")
 
 
 @app.route("/trace")
+@metrics.counter(
+    'cnt_trace', "Number of invocations of trace",
+    labels = {
+        'status': lambda resp: resp.status_code
+    }
+)
 def trace():
     def remove_tags(text):
         tag = re.compile(r"<[^>]+>")
